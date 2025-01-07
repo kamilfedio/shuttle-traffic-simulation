@@ -26,7 +26,7 @@ class Queue:
         self.drivers: List[Driver] = drivers
         self.red_timestamp: float | None = red_timestamp
         self.green_timestamp: float | None = green_timestamp
-        self.light_timestamps: List[tuple] = light_timestamps
+        self.light_timestamps: List[tuple] = light_timestamps[1:]
         self.light_state: bool = light_state
         self.happy_drivers: List[Driver] = []
 
@@ -54,7 +54,7 @@ class Queue:
 
     @classmethod
     def create_queue(cls, drivers: List[Driver], light_timestamps: List[tuple]) -> "Queue":
-        state, stamp = light_timestamps.pop(0)
+        state, stamp = light_timestamps[0]
         if state == TrafficLightState.GREEN:
             return cls(
                 drivers,
