@@ -1,21 +1,11 @@
-from typing import List
-from src.utils.names import possible_names
-import numpy as np
-import random
-
 """
 Driver model
 """
 
-'''
-Co on potrzebuje?
-- imie
-- id
-- czipsy
-- jesli czipsy, to generowany numer z inv U^2
-- czas reakcji (Dla kazdego??), dla pierwszego moze byc dluzszy
-- zbieranie danych i zeby fajnie zwracal np liste z liczbami
-'''
+from typing import List
+from src.utils.names import possible_names
+import numpy as np
+import random
 
 RED_RUNNING_TIMES = np.concatenate((abs(np.random.normal(0, 1.8, 300)),
                                     abs(np.random.normal(8.5, 1.75, 200)),
@@ -23,21 +13,30 @@ RED_RUNNING_TIMES = np.concatenate((abs(np.random.normal(0, 1.8, 300)),
 
 
 class Driver:
+    """
+    Co on potrzebuje?
+    - imie
+    - id
+    - czipsy
+    - jesli czipsy, to generowany numer z inv U^2
+    - czas reakcji (Dla kazdego??), dla pierwszego moze byc dluzszy
+    - zbieranie danych i zeby fajnie zwracal np liste z liczbami
+    """
+
     def __init__(
-        self,
-        driver_id: int,
-        name: str,
-        lays: bool,
-        reaction_time: float,
-        red_running_time: float = 0,
-        black_box: List = []
+            self,
+            driver_id: int,
+            name: str,
+            lays: bool,
+            reaction_time: float,
+            red_running_time: float = 0,
     ):
-        self.driver_id = driver_id
-        self.name = name
-        self.lays = lays
-        self.reaction_time = reaction_time
-        self.red_running_time = red_running_time
-        self.black_box = black_box
+        self.driver_id: int = driver_id
+        self.name: str = name
+        self.lays: bool = lays
+        self.reaction_time: float = reaction_time
+        self.red_running_time: float = red_running_time
+        self._black_box: List = []
 
     def __str__(self) -> str:
         return (f"Driver {self.driver_id}: {self.name}\n"
@@ -55,5 +54,6 @@ class Driver:
             red_running_time=random.sample(RED_RUNNING_TIMES, 1)
         )
 
-    def get_data(self):
-        return self.black_box
+    @property
+    def black_box(self):
+        return self._black_box
