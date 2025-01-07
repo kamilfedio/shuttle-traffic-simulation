@@ -35,8 +35,8 @@ class Driver:
         self.driver_id: int = driver_id
         self.name: str = name
         self.lays: bool = lays
-        self.reaction_time: float = reaction_time
         self.red_running_time: float = red_running_time
+        self._reaction_time: float = reaction_time
         self._arrived_time: float = arrived_time
         self._black_box: dict = dict()
         self._arrived_timestamp: float | None = None
@@ -67,6 +67,10 @@ class Driver:
     def black_box(self, value: dict[str, Any]) -> None:
         for key, value in value.items():
             self._black_box[key] = value
+
+    @property
+    def reaction_time(self):
+        return self._reaction_time
 
     @property
     def arrived_time(self):
