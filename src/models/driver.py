@@ -29,6 +29,7 @@ class Driver:
             name: str,
             lays: bool,
             reaction_time: float,
+            arrived_time: float,
             red_running_time: float = 0,
     ):
         self.driver_id: int = driver_id
@@ -36,7 +37,9 @@ class Driver:
         self.lays: bool = lays
         self.reaction_time: float = reaction_time
         self.red_running_time: float = red_running_time
+        self._arrived_time: float = arrived_time
         self._black_box: List = []
+        self._arrived_timestamp: float | None = None
 
     def __str__(self) -> str:
         return (f"Driver {self.driver_id}: {self.name}\n"
@@ -51,9 +54,19 @@ class Driver:
             name=np.random.choice(possible_names),
             lays=(1 == np.random.randint(1, 51)),
             reaction_time=np.random.lognormal(-0.4, 0.38, 1) + 0.3,
-            red_running_time=random.sample(RED_RUNNING_TIMES, 1)
+            red_running_time=random.sample(RED_RUNNING_TIMES, 1
+                                           ),
+            arrived_time=np.random.exponential(8, 1) + 1
         )
 
     @property
     def black_box(self):
         return self._black_box
+
+    @property
+    def arrived_time(self):
+        return self._arrived_time
+
+    @arrived_time.setter
+    def arrived_time(self, value):
+        self._arrived_timestamp = value
