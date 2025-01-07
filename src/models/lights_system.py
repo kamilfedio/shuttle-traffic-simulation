@@ -13,7 +13,6 @@ from src.models.driver import Driver
 
 @dataclass
 class LightsChangesTime:
-    yellow: float
     green: float
     red: float
 
@@ -39,8 +38,9 @@ class LightsSystem:
             self.drivers[idx].arrived_time = timestamp
 
     def generate_lights_timestamps(self) -> None:
-        times: tuple[float, float, float] = (2, 15, 20)
+        times: tuple[float, float] = (15, 20)
         lights_change_time: LightsChangesTime = LightsChangesTime(*times)
+
 
 
 
