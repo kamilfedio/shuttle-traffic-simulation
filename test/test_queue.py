@@ -25,3 +25,8 @@ def test_create_queue():
         isinstance(state, TrafficLightState)
         isinstance(stamp, float)
         assert stamp >= 0
+
+
+def test_update_lights():
+    queue: Queue = _create_queue()
+    queue.update_lights()

@@ -37,14 +37,24 @@ class Queue:
         if self.is_empty():
             return False
         driver = self.cars[0]
-        moved = self.current_time + penalty + driver.reaction_time
-        if moved <= self.red_timestamp:
-            driver = self.cars.pop(0)
-            print(moved, driver.arrived_timestamp)
-            driver.black_box = {"Drivers in queue": self.length(moved), "Waiting time": moved - driver.arrived_timestamp}
-            self.current_time = moved
-            self.happy_drivers.append(driver)
-            return True
+        if driver.arrived_timestamp > self.current_time:
+            moved = driver.arrived_timestamp + penalty + driver.reaction_time
+            if moved <= self.red_timestamp:
+                driver = self.cars.pop(0)
+                print(moved, driver.arrived_timestamp)
+                driver.black_box = {"Drivers in queue": self.length(moved), "Waiting time": moved - driver.arrived_timestamp}
+                self.current_time = moved
+                self.happy_drivers.append(driver)
+                return True
+        else:
+            moved = self.current_time + penalty + driver.reaction_time
+            if moved <= self.red_timestamp:
+                driver = self.cars.pop(0)
+                print(moved, driver.arrived_timestamp)
+                driver.black_box = {"Drivers in queue": self.length(moved), "Waiting time": moved - driver.arrived_timestamp}
+                self.current_time = moved
+                self.happy_drivers.append(driver)
+                return True
         return False
 
     def is_empty(self) -> bool:
@@ -72,7 +82,7 @@ class Queue:
         )
 
     def update(self, timestamp):
-        if self.drivers[0].arrived_time <= timestamp:
+        if self.drivers and self.drivers[0].arrived_time <= timestamp:
             self.enqueue(self.drivers.pop(0))
             self.update(timestamp)
 
@@ -96,5 +106,6 @@ class Queue:
                 time_penalty += 1
                 while skibidi:
                     skibidi = self.dequeue(time_penalty)
+                    time_penalty += 1
         else:
             self.update_lights()
