@@ -9,7 +9,7 @@ from src.models.driver import Driver
 def _create_queue() -> Queue:
     lightssystem = LightsSystem.create(traffic_state=TrafficLightState.GREEN, num_drivers=5)
     lightssystem.generate_lights_timestamps()
-    lightssystem.generate_driver()
+    lightssystem.generate_drivers()
     return Queue.create_queue(lightssystem.drivers, lightssystem.lights_timestamps)
 
 

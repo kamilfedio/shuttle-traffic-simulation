@@ -40,7 +40,8 @@ class Queue:
         moved = self.current_time + penalty + driver.reaction_time
         if moved <= self.red_timestamp:
             driver = self.cars.pop(0)
-            driver.black_box = {"Drivers in queue": self.length(), "Waiting time": moved - driver.arrived_timestamp}
+            print(moved, driver.arrived_timestamp)
+            driver.black_box = {"Drivers in queue": self.length(moved), "Waiting time": moved - driver.arrived_timestamp}
             self.current_time = moved
             self.happy_drivers.append(driver)
             return True
@@ -49,8 +50,8 @@ class Queue:
     def is_empty(self) -> bool:
         return len(self.cars) == 0
 
-    def length(self) -> int:
-        return len(self.cars)
+    def length(self, moved: float) -> int:
+        return len([car for car in self.cars if car.arrived_time <= moved])
 
     @classmethod
     def create_queue(cls, drivers: List[Driver], light_timestamps: List[tuple]) -> "Queue":
