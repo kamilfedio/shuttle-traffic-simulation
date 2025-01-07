@@ -2,7 +2,7 @@
 Driver model
 """
 
-from typing import List
+from typing import Any
 from src.utils.names import possible_names
 import numpy as np
 import random
@@ -38,7 +38,7 @@ class Driver:
         self.reaction_time: float = reaction_time
         self.red_running_time: float = red_running_time
         self._arrived_time: float = arrived_time
-        self._black_box: List = []
+        self._black_box: dict = dict()
         self._arrived_timestamp: float | None = None
 
     def __str__(self) -> str:
@@ -53,20 +53,29 @@ class Driver:
             driver_id,
             name=np.random.choice(possible_names),
             lays=(1 == np.random.randint(1, 51)),
-            reaction_time=np.random.lognormal(-0.4, 0.38, 1) + 0.3,
+            reaction_time=np.random.lognormal(-0.4, 0.38, 1).tolist()[0] + 0.3,
             red_running_time=random.sample(RED_RUNNING_TIMES, 1
-                                           ),
-            arrived_time=np.random.exponential(8, 1) + 1
+                                           )[0],
+            arrived_time=np.random.exponential(8, 1).tolist()[0] + 1
         )
 
     @property
-    def black_box(self):
+    def black_box(self) -> dict:
         return self._black_box
+
+    @black_box.setter
+    def black_box(self, value: dict[str, Any]) -> None:
+        for key, value in value.items():
+            self._black_box[key] = value
 
     @property
     def arrived_time(self):
         return self._arrived_time
 
-    @arrived_time.setter
-    def arrived_time(self, value):
+    @property
+    def arrived_timestamp(self):
+        return self._arrived_timestamp
+
+    @arrived_timestamp.setter
+    def arrived_timestamp(self, value):
         self._arrived_timestamp = value
