@@ -36,13 +36,14 @@ class LightsSystem:
 
     def generate_lights_timestamps(self) -> None:
         times: tuple[float, float] = (15, 20)
-        lights_change_time: LightsChangesTime = LightsChangesTime(*times)
+        lights_change_time: LightsChangesTime = LightsChangesTime(green=times[0], red=times[1])
         sum_time: int = 0
 
-        lights_timestamps: List[tuple[TrafficLightState, float]] = []
+        lights_timestamps: List[tuple[TrafficLightState, float]] = [(TrafficLightState.GREEN if self.traffic_lights.state == TrafficLightState.RED else TrafficLightState.RED, sum_time)]
+        self.swap_lights()
         while sum_time < 3600:
             sum_time += lights_change_time.green if self.traffic_lights.state == TrafficLightState.GREEN else lights_change_time.red
-            lights_timestamps.append((self.traffic_lights.state, sum_time))
+            lights_timestamps.append((TrafficLightState.GREEN if self.traffic_lights.state == TrafficLightState.RED else TrafficLightState.RED, sum_time))
             self.swap_lights()
 
         self._lights_timestamps = lights_timestamps
