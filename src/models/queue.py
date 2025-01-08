@@ -37,28 +37,17 @@ class Queue:
         if self.is_empty():
             return False
         driver = self.cars[0]
-        if driver.arrived_timestamp > self.current_time:
-            moved = driver.arrived_timestamp
-            if moved <= self.red_timestamp:
-                driver = self.cars.pop(0)
-                driver.black_box = {"Drivers in queue": self.length(moved),
-                                    "Waiting time": round(float(moved - driver.arrived_timestamp), 4),
-                                    "Arrived time": round(float(driver.arrived_timestamp), 4),
-                                    "Moved time": round(float(moved), 4)}
-                self.current_time = moved
-                self.happy_drivers.append(driver)
-                return True
-        else:
-            moved = self.current_time + penalty + driver.reaction_time
-            if moved <= self.red_timestamp:
-                driver = self.cars.pop(0)
-                driver.black_box = {"Drivers in queue": self.length(moved),
-                                    "Waiting time": round(float(moved - driver.arrived_timestamp), 4),
-                                    "Arrived time": round(float(driver.arrived_timestamp), 4),
-                                    "Moved time": round(float(moved), 4)}
-                self.current_time = moved
-                self.happy_drivers.append(driver)
-                return True
+        moved = driver.arrived_timestamp if driver.arrived_timestamp > self.current_time else self.current_time + penalty + driver.reaction_time
+
+        if moved <= self.red_timestamp:
+            driver = self.cars.pop(0)
+            driver.black_box = {"Drivers in queue": self.length(moved),
+                                "Waiting time": round(float(moved - driver.arrived_timestamp), 4),
+                                "Arrived time": round(float(driver.arrived_timestamp), 4),
+                                "Moved time": round(float(moved), 4)}
+            self.current_time = moved
+            self.happy_drivers.append(driver)
+            return True
         return False
 
     def is_empty(self) -> bool:
