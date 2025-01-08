@@ -33,7 +33,7 @@ class LightsSystem:
         self.drivers_timestamps = np.cumsum([driver.arrived_time for driver in self.drivers])
         for idx, timestamp in enumerate(self.drivers_timestamps):
             self.drivers[idx].arrived_timestamp = timestamp
-            self.drivers[idx].black_box = {"Arrived time": round(float(timestamp), 4)}
+            self.drivers[idx].black_box = {"arrived_time": round(float(timestamp), 4)}
 
     def generate_lights_timestamps(self) -> None:
         times: tuple[float, float] = (15, 20)

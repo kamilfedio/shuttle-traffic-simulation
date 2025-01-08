@@ -3,7 +3,7 @@ Driver model
 """
 
 from typing import Any
-from src.utils.names import possible_names
+from src.utils.names import GenerateNames
 import numpy as np
 import random
 
@@ -11,6 +11,7 @@ RED_RUNNING_TIMES = np.concatenate((abs(np.random.normal(0, 1.8, 300)),
                                     abs(np.random.normal(8.5, 1.75, 200)),
                                     np.random.uniform(11, 100, 4000))).tolist()
 
+generate_names: GenerateNames = GenerateNames()
 
 class Driver:
     """
@@ -51,7 +52,7 @@ class Driver:
     def generate_driver(cls, driver_id: int) -> "Driver":
         return cls(
             driver_id,
-            name=np.random.choice(possible_names),
+            name=np.random.choice(generate_names.possible_names),
             lays=(1 == np.random.randint(1, 51)),
             reaction_time=np.random.lognormal(-0.4, 0.38, 1).tolist()[0] + 0.3,
             red_running_time=random.sample(RED_RUNNING_TIMES, 1

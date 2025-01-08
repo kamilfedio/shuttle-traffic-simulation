@@ -41,10 +41,9 @@ class Queue:
 
         if moved <= self.red_timestamp:
             driver = self.cars.pop(0)
-            driver.black_box = {"Drivers in queue": self.length(moved),
-                                "Waiting time": round(float(moved - driver.arrived_timestamp), 4),
-                                "Arrived time": round(float(driver.arrived_timestamp), 4),
-                                "Moved time": round(float(moved), 4)}
+            driver.black_box = {"drivers_in_queue": self.length(moved),
+                                "waiting_time": round(float(moved - driver.arrived_timestamp), 4),
+                                "moved_time": round(float(moved), 4)}
             self.current_time = moved
             self.happy_drivers.append(driver)
             return True

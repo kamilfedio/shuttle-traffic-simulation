@@ -21,47 +21,60 @@ right_queue: Queue = Queue.create_queue(
 
 def print_que_state(queue: Queue, cosh: List):
     print()
-    for driver in queue.happy_drivers:
-        if driver not in cosh:
-            print(f'{driver.black_box, str(driver.name), driver.driver_id}')
-            cosh.append(driver)
+    print(f'| {"STATUS":<7} | {"ID":<3} | {"Driver Name":<13} | {"Arrived Time [s]":<17}' +
+          f' | {"Waiting Time [s]":<17} | {"Moved Time [s]":<17} | {"Drivers in Queue":<13} |')
+    print('-'*112)
+
+    drivers_to_show = [driver for driver in queue.happy_drivers if driver not in cosh]
+    for driver in drivers_to_show:
+        print(f'| RUNNING'
+              f' | {str(driver.driver_id).zfill(3)}'
+              f' | {driver.name:<13}'
+              f' | {driver.black_box.get("arrived_time", ""):<17}'
+              f' | {driver.black_box.get("waiting_time", ""):<17}'
+              f' | {driver.black_box.get("moved_time", ""):<17}'
+              f' | {driver.black_box.get("drivers_in_queue", ""):<16} |')
+        cosh.append(driver)
+    if not drivers_to_show:
+        print("| Running |")
+
     print()
 
 
 def print_red_queue(queue: Queue):
     print()
+    print(f'| {"STATUS":<7} | {"ID":<3} | {"Driver Name":<13} | {"Arrived Time [s]":<17} |')
+    print('-'*53)
+    if not queue.cars:
+        print('| WAITING |')
     for driver in queue.cars:
-        print(f'WAITING: {driver.black_box, str(driver.name), driver.driver_id}')
+        print(f'| WAITING'
+              f' | {str(driver.driver_id).zfill(3)}'
+              f' | {driver.name:<13}'
+              f' | {driver.black_box.get("arrived_time", ""):<17} |')
+
     print()
 
 
 cosh1 = []
 cosh2 = []
-space = ' '
-
 
 def run_cycle(queue1: Queue, queue2: Queue):
     if queue1.light_state:
-        print('Green' if queue2.light_state else 'Red')
         queue2.run()
         print_red_queue(queue2)
-        print('  -  '*30)
-        print('Green' if queue1.light_state else 'Red')
         queue1.run()
         print_que_state(queue1, cosh1)
     else:
-        l1_temp = queue1.light_state
         queue1.run()
 
-        print('Green' if queue2.light_state else 'Red')
         queue2.run()
         print_que_state(queue2, cosh2)
-        print('  -  '*30)
-        print('Green' if l1_temp else 'Red')
         print_red_queue(queue1)
 
 
 for cycle in range(20):
-    print('-' * 150)
-    print(f'\n{space*75}CYCLE {cycle}\n')
+    print('-' * 112)
+    cycle_title = f'CYCLE {cycle}'
+    print(f'\n{cycle_title:^112}\n')
     run_cycle(left_queue, right_queue)
