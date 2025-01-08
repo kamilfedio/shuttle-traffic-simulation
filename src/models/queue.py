@@ -123,13 +123,18 @@ class Queue:
             self.update_lights()
             self.update(self.green_timestamp)
 
-        data: dict[str, Any] = {
-            "timestamp": round(self.current_time),
-            "drove": drove,
-            "queue": self.length(self.current_time),
-            "light_state": 0 if light_state else 1,
-            "light_time": self.light_system.lights_change_time.green if light_state else self.light_system.lights_change_time.red,
-            "avg_waiting_time": round(sum(self.last_avg_waiting_time)/len(self.last_avg_waiting_time)) if self.last_avg_waiting_time else None
-        }
+        data: dict[str, Any] = dict()
+        if not self.light_state:
+            data["drove"] = drove
+            data["avg_waiting_time"] = round(sum(self.last_avg_waiting_time) / len(
+                self.last_avg_waiting_time), 4)
+        else:
+            data["queue"] = self.length(self.current_time)
+
+
         self.last_avg_waiting_time = list()
-        self.black_box.append(data)
+
+        if len(self.black_box) == 0 or len(self.black_box[-1].keys()) == 3:
+            self.black_box.append(data)
+        else:
+            self.black_box[-1].update(data)
