@@ -65,7 +65,7 @@ class Queue:
         return len(self.cars) == 0
 
     def length(self, moved: float) -> int:
-        return len([car for car in self.cars if car.arrived_time <= moved])
+        return len([car for car in self.cars if car.arrived_timestamp <= moved])
 
     @classmethod
     def create_queue(cls, drivers: List[Driver], light_timestamps: List[tuple]) -> "Queue":
@@ -86,7 +86,7 @@ class Queue:
         )
 
     def update(self, timestamp):
-        if self.drivers and self.drivers[0].arrived_time <= timestamp:
+        if self.drivers and self.drivers[0].arrived_timestamp <= timestamp:
             self.enqueue(self.drivers.pop(0))
             self.update(timestamp)
 
@@ -113,3 +113,4 @@ class Queue:
                     time_penalty += 1
         else:
             self.update_lights()
+            self.update(self.green_timestamp)
