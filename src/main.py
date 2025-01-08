@@ -22,6 +22,8 @@ right_queue: Queue = Queue.create_queue(
 print(left_queue.light_timestamps)
 print(left_queue.light_state)
 left_queue.run()
+left_queue.run()
+left_queue.run()
 
 for i in left_queue.happy_drivers:
     print(i.black_box, i.name, i.driver_id)
