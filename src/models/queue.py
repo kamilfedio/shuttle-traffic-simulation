@@ -127,7 +127,7 @@ class Queue:
         if not self.light_state:
             data["drove"] = drove
             data["avg_waiting_time"] = round(sum(self.last_avg_waiting_time) / len(
-                self.last_avg_waiting_time), 4)
+                self.last_avg_waiting_time), 4) if drove > 0 else 0
         else:
             data["queue"] = self.length(self.current_time)
 

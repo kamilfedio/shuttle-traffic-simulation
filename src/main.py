@@ -2,7 +2,6 @@ from src.models.queue import Queue
 from src.models.lights_system import LightsSystem
 from src.models.traffic_lights import TrafficLightState
 from typing import List
-from numpy import random
 
 left_light_system: LightsSystem = LightsSystem.create(TrafficLightState.GREEN, 100)
 left_queue: Queue = Queue.create_queue(
@@ -68,7 +67,6 @@ def run_cycle(queue1: Queue, queue2: Queue):
         queue2.run()
         print_que_state(queue2, cosh2)
         print_red_queue(queue1)
-
 
 for cycle in range(20):
     print('-' * 112)
