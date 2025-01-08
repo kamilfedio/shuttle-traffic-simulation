@@ -58,10 +58,7 @@ cosh2 = []
 
 def run_cycle(queue1: Queue, queue2: Queue):
     if queue1.light_state:
-        if random.randint(0, 3) == 1:
-            queue2.run(light_times=(20, 30))
-        else:
-            queue2.run(light_times=(15, 20))
+        queue2.run()
         print_red_queue(queue2)
         queue1.run()
         print_que_state(queue1, cosh1)
@@ -78,6 +75,3 @@ for cycle in range(20):
     cycle_title = f'CYCLE {cycle}'
     print(f'\n{cycle_title:^112}\n')
     run_cycle(left_queue, right_queue)
-
-print(left_queue.black_box)
-print(right_queue.black_box)
