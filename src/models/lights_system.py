@@ -22,6 +22,7 @@ class LightsSystem:
             traffic_lights: TrafficLight,
             num_drivers: int,
     ) -> None:
+        self.lights_change_time: LightsChangesTime | None = None
         self.traffic_lights = traffic_lights
         self.num_drivers = num_drivers
         self.drivers: List[Driver] | None = None
@@ -35,15 +36,17 @@ class LightsSystem:
             self.drivers[idx].arrived_timestamp = timestamp
             self.drivers[idx].black_box = {"arrived_time": round(float(timestamp), 4)}
 
-    def generate_lights_timestamps(self) -> None:
-        times: tuple[float, float] = (15, 20)
-        lights_change_time: LightsChangesTime = LightsChangesTime(green=times[0], red=times[1])
+    def generate_lights_timestamps(self, times: tuple[int, int] | None = None) -> None:
+        if not times:
+            times: tuple[float, float] = (15, 20)
+
+        self.lights_change_time: LightsChangesTime = LightsChangesTime(green=times[0], red=times[1])
         sum_time: int = 0
 
         lights_timestamps: List[tuple[TrafficLightState, float]] = [(self.traffic_lights.state, sum_time)]
         self.swap_lights()
         while sum_time < 3600:
-            sum_time += lights_change_time.green if self.traffic_lights.state == TrafficLightState.RED else lights_change_time.red
+            sum_time += self.lights_change_time.green if self.traffic_lights.state == TrafficLightState.RED else self.lights_change_time.red
             lights_timestamps.append((self.traffic_lights.state, sum_time))
             self.swap_lights()
 
