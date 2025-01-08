@@ -66,6 +66,8 @@ class Driver:
     @black_box.setter
     def black_box(self, value: dict[str, Any]) -> None:
         for key, value in value.items():
+            if isinstance(value, np.float64):
+                value = round(float(value), 2)
             self._black_box[key] = value
 
     @property

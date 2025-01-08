@@ -3,9 +3,7 @@ from src.models.lights_system import LightsSystem
 from src.models.traffic_lights import TrafficLightState
 
 left_light_system: LightsSystem = LightsSystem.create(TrafficLightState.GREEN, 100)
-print(left_light_system.traffic_lights.state)
 left_light_system.generate_lights_timestamps()
-print(left_light_system.lights_timestamps)
 
 left_light_system.generate_drivers()
 left_queue: Queue = Queue.create_queue(
@@ -19,12 +17,12 @@ right_queue: Queue = Queue.create_queue(
     right_light_system.drivers, right_light_system.lights_timestamps
 )
 
-print(left_queue.light_timestamps)
-print(left_queue.light_state)
-left_queue.run()
-left_queue.run()
-left_queue.run()
-
-for i in left_queue.happy_drivers:
-    print(i.black_box, i.name, i.driver_id)
+happy_drivers = []
+for _ in range(10):
+    print(left_queue.light_state)
+    left_queue.run()
+    new_happy_drivers = [i for i in left_queue.happy_drivers if i not in happy_drivers]
+    happy_drivers.extend(new_happy_drivers)
+    for i in new_happy_drivers:
+        print(i.black_box, i.name, i.driver_id)
     print()
