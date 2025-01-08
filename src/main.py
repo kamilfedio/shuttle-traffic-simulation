@@ -5,6 +5,8 @@ from src.models.traffic_lights import TrafficLightState
 left_light_system: LightsSystem = LightsSystem.create(TrafficLightState.GREEN, 100)
 print(left_light_system.traffic_lights.state)
 left_light_system.generate_lights_timestamps()
+print(left_light_system.lights_timestamps)
+
 left_light_system.generate_drivers()
 left_queue: Queue = Queue.create_queue(
     left_light_system.drivers, left_light_system.lights_timestamps
