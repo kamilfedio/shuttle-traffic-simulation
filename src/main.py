@@ -74,4 +74,3 @@ for cycle in range(20):
     print(f'\n{cycle_title:^112}\n')
     run_cycle(left_queue, right_queue)
 
-print(left_queue.black_box)
