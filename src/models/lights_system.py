@@ -41,12 +41,13 @@ class LightsSystem:
             times: tuple[float, float] = (15, 20)
 
         self.lights_change_time: LightsChangesTime = LightsChangesTime(green=times[0], red=times[1])
-        sum_time: int = 0
+
+        sum_time: int = 0 if self.traffic_lights.state == TrafficLightState.RED else 5
 
         lights_timestamps: List[tuple[TrafficLightState, float]] = [(self.traffic_lights.state, sum_time)]
         self.swap_lights()
         while sum_time < 3600:
-            sum_time += self.lights_change_time.green if self.traffic_lights.state == TrafficLightState.RED else self.lights_change_time.red
+            sum_time += self.lights_change_time.green if self.traffic_lights.state == TrafficLightState.RED else (self.lights_change_time.red + 5)
             lights_timestamps.append((self.traffic_lights.state, sum_time))
             self.swap_lights()
 
