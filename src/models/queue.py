@@ -30,6 +30,7 @@ class Queue:
         self.happy_drivers: List[Driver] = []
         self._blackbox: List[dict] = list()
         self.last_avg_waiting_time: List[float] = list()
+        self.counter: int = -1
 
     def enqueue(self, car):
         self.cars.append(car)
@@ -79,7 +80,7 @@ class Queue:
         )
 
     def update(self, timestamp):
-        if self.light_system.drivers and self.light_system.drivers[0].arrived_timestamp <= timestamp:
+        if self.light_system.drivers and self.light_system.drivers[0].arrived_timestamp <= timestamp + 5:
             self.enqueue(self.light_system.drivers.pop(0))
             self.update(timestamp)
 
@@ -101,11 +102,12 @@ class Queue:
     def black_box(self, value: dict) -> None:
         self._blackbox.append(value)
 
-    def run(self, light_times: tuple[int, int] | None = None) -> None:
+    def run(self, light_times: tuple[float, ...] | None = None) -> None:
         drove: int = 0
-        light_state = self.light_state
+        self.counter += 1
         if light_times:
             self.light_system.generate_lights_timestamps(light_times)
+            self.light_system.lights_timestamps = self.light_system.lights_timestamps[self.counter:]
 
         time_penalty = 0
         if self.light_state:
@@ -128,9 +130,9 @@ class Queue:
             data["drove"] = drove
             data["avg_waiting_time"] = round(sum(self.last_avg_waiting_time) / len(
                 self.last_avg_waiting_time), 4) if drove > 0 else 0
+            data["queue"] = self.length(self.red_timestamp + 5)
         else:
-            data["queue"] = self.length(self.current_time)
-
+            data["queue"] = self.length(self.green_timestamp)
 
         self.last_avg_waiting_time = list()
 
@@ -138,3 +140,6 @@ class Queue:
             self.black_box.append(data)
         else:
             self.black_box[-1].update(data)
+
+    def scan_queue(self) -> int:
+        return self._blackbox[-1]['queue']

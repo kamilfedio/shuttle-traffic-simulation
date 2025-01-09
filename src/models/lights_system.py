@@ -36,7 +36,7 @@ class LightsSystem:
             self.drivers[idx].arrived_timestamp = timestamp
             self.drivers[idx].black_box = {"arrived_time": round(float(timestamp), 4)}
 
-    def generate_lights_timestamps(self, times: tuple[int, int] | None = None) -> None:
+    def generate_lights_timestamps(self, times: tuple[float, ...] | None = None) -> None:
         if not times:
             times: tuple[float, float] = (15, 20)
 
