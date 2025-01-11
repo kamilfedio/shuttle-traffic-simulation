@@ -32,7 +32,7 @@ class Queue:
         self.last_avg_waiting_time: List[float] = list()
         self.counter: int = -1
 
-    def enqueue(self, car):
+    def enqueue(self, car) -> None:
         self.cars.append(car)
 
     def dequeue(self, penalty) -> bool:
@@ -40,7 +40,8 @@ class Queue:
             return False
 
         driver = self.cars[0]
-        moved = driver.arrived_timestamp if driver.arrived_timestamp > self.current_time else self.current_time + penalty + driver.reaction_time
+        moved = driver.arrived_timestamp if driver.arrived_timestamp > self.current_time else (
+                self.current_time + penalty + driver.reaction_time)
 
         if moved <= self.red_timestamp:
             driver = self.cars.pop(0)
@@ -79,20 +80,25 @@ class Queue:
             red_timestamp=stamp
         )
 
-    def update(self, timestamp):
-        if self.light_system.drivers and self.light_system.drivers[0].arrived_timestamp <= timestamp + 5:
+    def update(self, timestamp) -> None:
+        if self.light_system.drivers and self.light_system.drivers[0].arrived_timestamp <= timestamp:
             self.enqueue(self.light_system.drivers.pop(0))
             self.update(timestamp)
 
-    def update_lights(self):
-        self.light_system.swap_lights()
-        state, stamp = self.light_system.lights_timestamps.pop(0)
+    def update_lights(self, green_new_time: float, red_new_time: float) -> None:
+        state, _ = self.light_system.lights_timestamps.pop(0)
+        print(state, _)
         if state == TrafficLightState.GREEN:
             self.light_state = True
-            self.green_timestamp = stamp
+            self.green_timestamp = self.red_timestamp + red_new_time + 5
         else:
             self.light_state = False
-            self.red_timestamp = stamp
+            if not self.red_timestamp:
+                self.red_timestamp = self.green_timestamp + green_new_time
+            else:
+                self.red_timestamp = self.green_timestamp + green_new_time
+        print(f'GREEN: {self.green_timestamp}')
+        print(f'RED: {self.red_timestamp}')
 
     @property
     def black_box(self) -> List[dict]:
@@ -105,13 +111,10 @@ class Queue:
     def run(self, light_times: tuple[float, ...] | None = None) -> None:
         drove: int = 0
         self.counter += 1
-        if light_times:
-            self.light_system.generate_lights_timestamps(light_times)
-            self.light_system.lights_timestamps = self.light_system.lights_timestamps[self.counter:]
 
         time_penalty = 0
         if self.light_state:
-            self.update_lights()
+            self.update_lights(*light_times)
             self.update(self.red_timestamp)
             if not self.is_empty():
                 self.current_time = self.green_timestamp
@@ -121,8 +124,9 @@ class Queue:
                     drove += 1
                     skibidi = self.dequeue(time_penalty)
                     time_penalty += 1
+            self.update(self.red_timestamp + 5)
         else:
-            self.update_lights()
+            self.update_lights(*light_times)
             self.update(self.green_timestamp)
 
         data: dict[str, Any] = dict()

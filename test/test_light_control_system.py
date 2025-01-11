@@ -7,7 +7,7 @@ from src.models.light_control_system import ControlSystem
 '''
 
 
-def _create_light_control_system(basetime: float | int, alpha: int| float = None):
+def _create_light_control_system(basetime: float | int, alpha: int | float = None):
     return ControlSystem.create_control_system(basetime, alpha)
 
 

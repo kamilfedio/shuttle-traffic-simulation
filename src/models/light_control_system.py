@@ -23,9 +23,8 @@ class ControlSystem:
 
     def calculate_time(self, queue1: int, queue2: int) -> tuple[float, ...]:
         difference: int = queue1 - queue2
-        print(type(self.alpha))
         if self.alpha:
             green_time: float = (self.alpha ** difference) * self.basetime
-            print(self.alpha, difference, self.basetime)
+            #print(self.alpha, difference, self.basetime)
             return tuple([green_time, green_time + 5])
         return tuple([self.basetime, self.basetime + 5])

@@ -2,16 +2,18 @@
 Driver model
 """
 
-from typing import Any
+from typing import Any, List
 from src.utils.names import GenerateNames
 import numpy as np
 import random
 
-RED_RUNNING_TIMES = np.concatenate((abs(np.random.normal(0, 1.8, 300)),
+RED_RUNNING_TIMES: List[float] = np.concatenate((abs(np.random.normal(0, 1.8, 300)),
                                     abs(np.random.normal(8.5, 1.75, 200)),
                                     np.random.uniform(11, 100, 4000))).tolist()
+RED_RUNNING_TIMES = [time for time in RED_RUNNING_TIMES if time < 5]
 
 generate_names: GenerateNames = GenerateNames()
+
 
 class Driver:
     """

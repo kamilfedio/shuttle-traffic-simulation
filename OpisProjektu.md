@@ -11,7 +11,7 @@ Optymalizacja przepustowości drogi poprzez dobór idealnego czasu dla sygnaliza
 ## Hipotezy
 
 1. Wydłużenie czasu trwania zielonego światła przy większym natężeniu ruchu w jednym kierunku poprawi przepustowość drogi, w porównaniu do takiego samego czasu dla A i B.
-2. Istnienie czujnika przejazdu samochodu resetującego czas trwania przerwy pomiędzy światłami poprawia średnią przepustowość odcinka.
+2. Istnienie czujnika przejazdu samochodu resetującego czas trwania przerwy pomiędzy światłami poprawia średnią przepustowość odcinka. (to zmieniliśmy na inteligentny system świateł)
 3. Równomierny podział czasu sygnalizacji przy równym natężeniu ruchu minimalizuje średni czas oczekiwania.
 
 ## Wejścia

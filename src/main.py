@@ -13,13 +13,15 @@ right_light_system: LightsSystem = LightsSystem.create(TrafficLightState.RED, 10
 right_queue: Queue = Queue.create_queue(
     right_light_system
 )
-print(right_light_system.lights_timestamps[:4])
-print(left_light_system.lights_timestamps[:4])
-'''SYNCHRONIZACJA SWIATEL NIE DZIALA'''
 
 
-def print_que_state(queue: Queue, cosh: List):
+def print_queue_state(queue: Queue, cosh: List, is_right: bool):
     print()
+    if is_right:
+        print(f' {"~ " * 25}{"R I G H T "}{"~ " * 25}~')
+    else:
+        print(f' {"~ " * 26}{"L E F T "}{"~ " * 25}~')
+    print('-' * 112)
     print(f'| {"STATUS":<7} | {"ID":<3} | {"Driver Name":<13} | {"Arrived Time [s]":<17}' +
           f' | {"Waiting Time [s]":<17} | {"Moved Time [s]":<17} | {"Drivers in Queue":<13} |')
     print('-' * 112)
@@ -36,12 +38,18 @@ def print_que_state(queue: Queue, cosh: List):
         cosh.append(driver)
     if not drivers_to_show:
         print("| Running |")
+    print('-' * 112)
 
     print()
 
 
-def print_red_queue(queue: Queue):
+def print_red_queue(queue: Queue, is_right: bool):
     print()
+    if is_right:
+        print(f'{"~ " * 11}{"R I G H T "}{"~ " * 10}~')
+    else:
+        print(f'{"~ " * 11}{"L E F T "}{"~ " * 11}~')
+    print('-' * 53)
     print(f'| {"STATUS":<7} | {"ID":<3} | {"Driver Name":<13} | {"Arrived Time [s]":<17} |')
     print('-' * 53)
     if not queue.cars:
@@ -51,7 +59,7 @@ def print_red_queue(queue: Queue):
               f' | {str(driver.driver_id).zfill(3)}'
               f' | {driver.name:<13}'
               f' | {driver.black_box.get("arrived_time", ""):<17} |')
-
+    print('-' * 53)
     print()
 
 
@@ -59,37 +67,38 @@ cosh1 = []
 cosh2 = []
 
 
-def run_cycle(queue1: Queue, queue2: Queue, times: tuple[float, ...]):
+def run_cycle(queue1: Queue, queue2: Queue, new_times: tuple[float, ...] | None = None):
     if queue1.light_state:
-        queue2.run(times[::-1])
-        print_red_queue(queue2)
-        queue1.run(times)
-        print_que_state(queue1, cosh1)
+        print('\nRIGHT')
+        queue2.run(new_times)
+        print_red_queue(queue2, True)
+        print("LEFT")
+        queue1.run(new_times)
+        print_queue_state(queue1, cosh1, False)
     else:
-        queue1.run(times[::-1])
-        queue2.run(times)
-        print_que_state(queue2, cosh2)
-        print_red_queue(queue1)
+        print("LEFT")
+        queue1.run(new_times)
+        print('\nRIGHT')
+        queue2.run(new_times)
+        print_queue_state(queue2, cosh2, True)
+        print_red_queue(queue1, False)
 
 
 times: tuple[float, ...] = (15, 20)
-control_system = ControlSystem.create_control_system(times[0], 1)
+control_system = ControlSystem.create_control_system(times[0], 1.1)
 
-
-for cycle in range(6):
+for cycle in range(4):
     print('-' * 112)
     cycle_title = f'CYCLE {cycle}'
     print(f'\n{cycle_title:^112}\n')
     run_cycle(left_queue, right_queue, times)
 
-    print(right_queue.scan_queue())
+    print(f'RIGHT: {right_queue.scan_queue()}')
     print(right_queue.black_box)
-    print(left_queue.scan_queue())
+    print(f'LEFT: {left_queue.scan_queue()}')
     print(left_queue.black_box)
 
-    times = control_system.calculate_time(right_queue.scan_queue(), left_queue.scan_queue()) if right_queue.light_state\
-        else control_system.calculate_time(left_queue.scan_queue(), right_queue.scan_queue())
+    times = control_system.calculate_time(right_queue.scan_queue(), left_queue.scan_queue()) \
+        if right_queue.light_state else control_system.calculate_time(left_queue.scan_queue(), right_queue.scan_queue())
 
-    print(right_light_system.lights_timestamps[:3])
-    print(times)
-
+    # print(times)
