@@ -119,11 +119,11 @@ class Queue:
             if not self.is_empty():
                 self.current_time = self.green_timestamp
                 skibidi = self.dequeue(time_penalty)
-                time_penalty += 1
+                time_penalty += 0.25
                 while skibidi:
                     drove += 1
                     skibidi = self.dequeue(time_penalty)
-                    time_penalty += 1
+                    time_penalty += 0.25
             self.update(self.red_timestamp + 5)
         else:
             self.update_lights(*light_times)

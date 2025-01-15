@@ -85,4 +85,22 @@ r
 - Czas przejazdu liniowo wpływa na ilość przejechanych samochodów
 - Natężenie ruchu wpływa wykładniczo na długość kolejki
 
-# Jak to ma działać
+# Plan działania
+
+**STAŁE**
+- Czas reakcji kierowcy: rozkład lognormalny (średnia: 1, odchylenie standardowe: 0.38) + 0.3
+<img src="./data/charts/distributions/lognormal.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
+
+
+- Timestamp wjazdu na czerwonym świetle, wartości mniejsze od 5 z połączonych rozkładów: 
+  - abs(rozkład normalny (średnia: 0, odchylenie standardowe: 1.2, ilość: 3000)), 
+  - abs(rozkład normalny (średnia: 4, odchylenie standardowe: 0.75, ilość: 2000)) 
+  
+  <img src="./data/charts/distributions/red_light.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
+
+
+- Czy kierowca wygrał prawo jazdy w laysach: 2% szansy dla każdego kierowcy
+
+
+**ZMIENNE**
+- Czas przyjazdu następnego kierowcy: rozkład wykładniczy ()

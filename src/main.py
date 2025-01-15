@@ -4,12 +4,12 @@ from src.models.traffic_lights import TrafficLightState
 from typing import List
 from src.models.light_control_system import ControlSystem
 
-left_light_system: LightsSystem = LightsSystem.create(TrafficLightState.GREEN, 100)
+left_light_system: LightsSystem = LightsSystem.create(TrafficLightState.GREEN, 500)
 left_queue: Queue = Queue.create_queue(
     left_light_system
 )
 
-right_light_system: LightsSystem = LightsSystem.create(TrafficLightState.RED, 100)
+right_light_system: LightsSystem = LightsSystem.create(TrafficLightState.RED, 500)
 right_queue: Queue = Queue.create_queue(
     right_light_system
 )
@@ -63,6 +63,12 @@ def print_red_queue(queue: Queue, is_right: bool):
     print()
 
 
+def _avg_waiting_times(queue: Queue):
+    waiting_times = [happy_driver.black_box.get('waiting_time', 0) for happy_driver in queue.happy_drivers]
+    queue_length = [happy_driver.black_box.get('drivers_in_queue', 0) for happy_driver in queue.happy_drivers]
+    return {'avg_waiting_times': sum(waiting_times)/len(waiting_times), 'avg_queue_length': sum(queue_length)/len(queue_length)}
+
+
 cosh1 = []
 cosh2 = []
 
@@ -85,20 +91,28 @@ def run_cycle(queue1: Queue, queue2: Queue, new_times: tuple[float, ...] | None 
 
 
 times: tuple[float, ...] = (15, 20)
-control_system = ControlSystem.create_control_system(times[0], 1.1)
+control_system = ControlSystem.create_control_system(times[0], 1)
 
-for cycle in range(4):
+for cycle in range(100):
     print('-' * 112)
     cycle_title = f'CYCLE {cycle}'
     print(f'\n{cycle_title:^112}\n')
     run_cycle(left_queue, right_queue, times)
 
     print(f'RIGHT: {right_queue.scan_queue()}')
-    print(right_queue.black_box)
+    #print(right_queue.black_box)
     print(f'LEFT: {left_queue.scan_queue()}')
-    print(left_queue.black_box)
+    #print(left_queue.black_box)
 
     times = control_system.calculate_time(right_queue.scan_queue(), left_queue.scan_queue()) \
         if right_queue.light_state else control_system.calculate_time(left_queue.scan_queue(), right_queue.scan_queue())
 
     # print(times)
+
+avgs_left = _avg_waiting_times(left_queue)
+avgs_right = _avg_waiting_times(right_queue)
+
+print(f'| DIRECTION | FIRST COLOR | AVG WAITING TIME | AVG LENGTH |')
+print('-' * 112)
+print(f'| LEFT      | GREEN       | {avgs_left["avg_waiting_times"]:<16.2f} | {avgs_left["avg_queue_length"]:<10.2f} |')
+print(f'| LEFT      | RED         | {avgs_right["avg_waiting_times"]:<16.2f} | {avgs_right["avg_queue_length"]:<10.2f} |')
