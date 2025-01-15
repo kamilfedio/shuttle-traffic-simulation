@@ -106,3 +106,5 @@ r
 - Czas przyjazdu następnego kierowcy: rozkład wykładniczy ()
 
 
+
+
