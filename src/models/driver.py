@@ -58,7 +58,7 @@ class Driver:
             reaction_time=np.random.lognormal(-0.4, 0.38, 1).tolist()[0] + 0.3,
             red_running_time=random.sample(RED_RUNNING_TIMES, 1
                                            )[0],
-            arrived_time=np.random.exponential(10, 1).tolist()[0] + 1
+            arrived_time=np.random.exponential(4.5, 1).tolist()[0] + 1
         )
 
     @property

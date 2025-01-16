@@ -47,6 +47,9 @@ class Queue:
             driver = self.cars.pop(0)
             driver.black_box = {"drivers_in_queue": self.length(moved),
                                 "waiting_time": round(float(moved - driver.arrived_timestamp), 4),
+                                "green_wait_time": round(float(moved - (self.green_timestamp if
+                                                                        self.green_timestamp > driver.arrived_timestamp
+                                                                        else driver.arrived_timestamp)), 4),
                                 "moved_time": round(float(moved), 4)}
             self.current_time = moved
             self.happy_drivers.append(driver)
@@ -135,15 +138,12 @@ class Queue:
             data["avg_waiting_time"] = round(sum(self.last_avg_waiting_time) / len(
                 self.last_avg_waiting_time), 4) if drove > 0 else 0
             data["queue"] = self.length(self.red_timestamp + 5)
+            data["cycle_wait"] = self.length(self.red_timestamp + 5)
         else:
             data["queue"] = self.length(self.green_timestamp)
 
         self.last_avg_waiting_time = list()
-
-        if len(self.black_box) == 0 or len(self.black_box[-1].keys()) == 3:
-            self.black_box.append(data)
-        else:
-            self.black_box[-1].update(data)
+        self.black_box.append(data)
 
     def scan_queue(self) -> int:
         return self._blackbox[-1]['queue']

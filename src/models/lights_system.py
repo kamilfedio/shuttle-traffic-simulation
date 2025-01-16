@@ -30,7 +30,7 @@ class LightsSystem:
         self._lights_timestamps: List[float] | None = None
 
     def generate_drivers(self) -> None:
-        self.drivers: List[Driver] = [Driver.generate_driver(driver_id=i) for i in range(self.num_drivers)]
+        self.drivers: List[Driver] = [Driver.generate_driver(driver_id=i+1) for i in range(self.num_drivers)]
         self.drivers_timestamps = np.cumsum([driver.arrived_time for driver in self.drivers])
         for idx, timestamp in enumerate(self.drivers_timestamps):
             self.drivers[idx].arrived_timestamp = timestamp

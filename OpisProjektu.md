@@ -89,13 +89,14 @@ r
 
 **STAŁE**
 - Czas reakcji kierowcy: rozkład lognormalny (średnia: 1, odchylenie standardowe: 0.38) + 0.3
-<img src="./data/charts/distributions/lognormal.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
+
+  <img src="./data/charts/distributions/lognormal.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
 
 
 - Timestamp wjazdu na czerwonym świetle, wartości mniejsze od 5 z połączonych rozkładów: 
   - abs(rozkład normalny (średnia: 0, odchylenie standardowe: 1.2, ilość: 3000)), 
   - abs(rozkład normalny (średnia: 4, odchylenie standardowe: 0.75, ilość: 2000)) 
-  
+
   <img src="./data/charts/distributions/red_light.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
 
 
@@ -103,6 +104,9 @@ r
 
 
 **ZMIENNE**
-- Czas przyjazdu następnego kierowcy: rozkład wykładniczy ()
+- Czas przyjazdu następnego kierowcy:
+    - Niskie natężenie (0 do 1 osób czekają ponad 1 cykl): rozkład wykładniczy (scale: 9)
+    - Średnie natężenie (1 do 4 osób czekają ponad 1 cykl): rozkład wykładniczy (scale: 5)
+    - Wysokie natężenie (powyzej 4 osoby czekają ponad 1 cykl): rozkład wykładniczy (scale: 4.5)
 
 
