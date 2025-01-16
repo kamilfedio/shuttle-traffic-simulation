@@ -104,7 +104,8 @@ def run_cycle(queue1: Queue, queue2: Queue, new_times: tuple[float, ...] | None 
 times: tuple[float, ...] = (15, 20)
 control_system = ControlSystem.create_control_system(times[0], 1)
 
-for cycle in range(100):
+cycle = 0
+while left_queue.current_time <= 3600:
     print('-' * 150)
     cycle_title = f'CYCLE {cycle}'
     print(f'\n{cycle_title:^150}\n')
@@ -115,6 +116,8 @@ for cycle in range(100):
 
     times = control_system.calculate_time(right_queue.scan_queue(), left_queue.scan_queue()) \
         if right_queue.light_state else control_system.calculate_time(left_queue.scan_queue(), right_queue.scan_queue())
+
+    cycle += 1
 
 
 avgs_left = _avg_waiting_times(left_queue)
