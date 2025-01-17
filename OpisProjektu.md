@@ -88,7 +88,7 @@ r
 # Plan działania
 
 **STAŁE**
-- Czas reakcji kierowcy: rozkład lognormalny (średnia: 1, odchylenie standardowe: 0.38) + 0.3
+- Czas reakcji kierowcy: (rozkład lognormalny (średnia: 1, odchylenie standardowe: 0.38) + 0.3
 
   <img src="./data/charts/distributions/lognormal.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
 
@@ -110,3 +110,36 @@ r
     - Wysokie natężenie (powyzej 4 osoby czekają ponad 1 cykl): rozkład wykładniczy (scale: 4.5)
 
 
+
+## PRZYPADKI TESTOWE
+
+1)  Lewa kolejka: małe natężenie, prawa kolejka: małe natężenie
+2)  Lewa kolejka: średnie natężenie, prawa kolejka: średnie natężenie
+3)  Lewa kolejka: duże natężenie, prawa kolejka: dużę natężenie
+
+
+4)  Lewa kolejka: małe natężenie, prawa kolejka: średnie natężenie
+5)  Lewa kolejka: małe natężenie, prawa kolejka: duże natężenie
+6)  Lewa kolejka: średnie natężenie, prawa kolejka: duże natężenie
+
+
+Dla każdego przypadku testowane 2 wersje:
+- ustalone czasy trwania świateł (alpha = 1)
+- inteligentny system kontroli świateł (alpha = ?)
+
+Ilość powtórzeń dla każdego przypadku: 20 ?
+
+
+## PARAMETRY ŚWIADCZĄCE O JAKOŚCI MODELU
+Główny:
+- średni czas oczekiwania
+
+Pozostałe:
+- ilość kierowców, którzy przejechali
+- procent kierowców którzy nir musieli się zatrzymać
+- średni czas oczekiwania na zielonym świetle
+- średnia długość kolejki podczas końcowego momentu cyklu
+- średnia ilość kierowców czekających dłużej niż 1 cykl
+
+
+Test sprawdzające czy inteligentny system kontroli radzi sobie lepiej - test t dla prób niezależnych
