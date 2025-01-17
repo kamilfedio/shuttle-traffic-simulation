@@ -50,15 +50,28 @@ def print_queue_state(queue: Queue, cosh: List, is_right: bool):
     print()
 
 
-def simulation_summary(blackbox: dict[str, Any]) -> None:
+def print_simulation_summary(blackbox: dict[str, Any]) -> None:
     print(f'\n\n{"S T A T S":^158}')
     print("-" * 158)
     print(f'| DIRECTION | FIRST COLOR | DRIVERS SERVED | NO-WAIT DRIVERS | AVG WAIT TIME | AVG GREEN WAIT TIME | '
           f'AVG DRIVERS BEHIND | AVG QUEUE LENGTH | AVG CYCLE WAITS |')
     print('-' * 158)
-    for key, blackbox in blackbox:
+    for key, blackbox in blackbox.items():
         print(
             f"| {blackbox['direction']:<9} | {blackbox['first_color']:<11} | {blackbox['avgs']['drivers_served']:<14} | {blackbox['avgs']['no_stop_drivers']:<15} | {blackbox['avgs']['avg_waiting_times']:<13.2f} | "
             f"{blackbox['avgs']['avg_green_waiting_times']:<19.2f} | {blackbox['avgs']['avg_queue_length']:<18.2f} | "
             f"{blackbox['avg_queue_length']:<16.2f} | {blackbox['avg_cycle_wait']:<15.2f} |")
         print('-' * 158)
+
+def print_cycle_summary(data: tuple, direction: str, is_left_green: bool = True) -> None:
+    if is_left_green:
+        print(f'\n{direction}')
+        print(data[0], data[1])
+        print(f'GREEN: {data[2]}')
+        print(f'RED: {data[3]}')
+    else:
+        if is_left_green:
+            print(f'\n{direction}')
+            print(data[0], data[1])
+            print(f'RED: {data[2]}')
+            print(f'GREEN: {data[3]}')
