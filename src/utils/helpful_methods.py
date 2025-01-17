@@ -16,7 +16,7 @@ def avg_waiting_times(queue: Queue):
             'avg_green_waiting_times': np.mean(green_waiting_times),
             'avg_queue_length': np.mean(queue_length),
             'drivers_served': served,
-            'no_stop_drivers': str(round(100 * no_stop / served, 2)) + "%"}
+            'no_stop_drivers': str(round(100 * no_stop / served, 2) if served > 0 else 0) + "%"}
 
 
 def create_blackbox(queue: Queue, direction: str) -> dict[str, Any]:
@@ -28,6 +28,5 @@ def create_blackbox(queue: Queue, direction: str) -> dict[str, Any]:
         'avgs': avgs_times,
         'avg_queue_length': avg_queue_length,
         'avg_cycle_wait': avg_cycle_wait,
-        'first_color': TrafficLightState.GREEN if queue.light_state else TrafficLightState.RED,
         'direction': direction
     }
