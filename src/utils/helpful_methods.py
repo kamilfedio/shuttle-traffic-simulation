@@ -1,6 +1,9 @@
+from typing import Any
+
 import numpy as np
 
 from src.models.queue import Queue
+from src.models.traffic_lights import TrafficLightState
 
 
 def avg_waiting_times(queue: Queue):
@@ -14,3 +17,17 @@ def avg_waiting_times(queue: Queue):
             'avg_queue_length': np.mean(queue_length),
             'drivers_served': served,
             'no_stop_drivers': str(round(100 * no_stop / served, 2)) + "%"}
+
+
+def create_blackbox(queue: Queue, direction: str) -> dict[str, Any]:
+    avgs_times = avg_waiting_times(queue)
+    avg_queue_length = np.mean([cell["queue"] for cell in queue.black_box])
+    avg_cycle_wait = np.mean([cell["cycle_wait"] for cell in queue.black_box if len(cell.keys()) > 1])
+
+    return {
+        'avgs': avgs_times,
+        'avg_queue_length': avg_queue_length,
+        'avg_cycle_wait': avg_cycle_wait,
+        'first_color': TrafficLightState.GREEN if queue.light_state else TrafficLightState.RED,
+        'direction': direction
+    }
