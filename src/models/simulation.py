@@ -1,11 +1,9 @@
-from typing import Any
-
 from src.models.light_control_system import ControlSystem
 from src.models.lights_system import LightsSystem
 from src.models.queue import Queue
 from src.models.traffic_lights import TrafficLightState
 from src.utils.helpful_methods import create_blackbox
-from src.utils.printing_methods import print_queue_state, print_red_queue, simulation_summary
+from src.utils.printing_methods import print_queue_state, print_red_queue, print_simulation_summary, print_cycle_summary
 
 
 class Simulation:
@@ -18,7 +16,7 @@ class Simulation:
         self.cosh1: list = []
         self.cosh2: list = []
         self.times: tuple[float, float] = times
-        self.blackbox: dict[str, Any] = {}
+        self.blackbox: dict[str, dict] = {}
 
     @classmethod
     def create(cls, num_drivers: int = 700, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
@@ -38,29 +36,36 @@ class Simulation:
 
     def _run_cycle(self) -> None:
         if self.left_queue.light_state:
-            print('\nRIGHT')
-            self.right_queue.run(self.times)
-            print_red_queue(self.right_queue, True)
-            print("LEFT")
-            self.left_queue.run(self.times)
-            print_queue_state(self.left_queue, self.cosh1, False)
+            data_r: tuple = self.right_queue.run(self.times)
+            data_l: tuple = self.left_queue.run(self.times)
+            if self.is_debugging:
+                print_cycle_summary(data_r, 'RIGHT')
+                print_cycle_summary(data_l, 'LEFT')
+                print_red_queue(self.right_queue, True)
+                print_queue_state(self.left_queue, self.cosh1, False)
+
         else:
-            print("LEFT")
-            self.left_queue.run(self.times)
-            print('\nRIGHT')
-            self.left_queue.run(self.times)
-            print_queue_state(self.right_queue, self.cosh2, True)
-            print_red_queue(self.left_queue, False)
+            data_l: tuple = self.left_queue.run(self.times)
+            data_r: tuple = self.right_queue.run(self.times)
+
+            if self.is_debugging:
+                print_cycle_summary(data_l, 'LEFT',  False)
+                print_cycle_summary(data_r, 'RIGHT', False)
+                print_queue_state(self.right_queue, self.cosh2, True)
+                print_red_queue(self.left_queue, False)
 
     def _simulation_summary(self) -> None:
-        simulation_summary(self.blackbox)
+        print_simulation_summary(self.blackbox)
 
     def _create_blackbox(self) -> None:
-        self.blackbox['left_queue'] = create_blackbox(self.left_queue, 'left')
-        self.blackbox['right_queue'] = create_blackbox(self.right_queue, 'right')
+        self.blackbox['left_queue'].update(create_blackbox(self.left_queue, 'left'))
+        self.blackbox['right_queue'].update(create_blackbox(self.right_queue, 'right'))
 
     def simulate(self, simulation_seconds: int = 3600) -> None:
         cycle: int = 0
+        self.blackbox['left_queue'] = {'first_color': self.left_queue.light_system.traffic_lights.state}
+        self.blackbox['right_queue'] = {'first_color': self.right_queue.light_system.traffic_lights.state}
+
         while self.left_queue.current_time <= simulation_seconds:
             self._run_cycle()
             self.times = self.control_system.calculate_time(
