@@ -4,7 +4,7 @@ from src.models.traffic_lights import TrafficLightState
 from src.models.light_control_system import ControlSystem
 from numpy import mean, random
 
-from src.utils.helpful_methods import _avg_waiting_times
+from src.utils.helpful_methods import avg_waiting_times
 from src.utils.printing_methods import print_red_queue, print_queue_state
 
 random.seed(42)
@@ -59,8 +59,8 @@ while left_queue.current_time <= 3600:
     cycle += 1
 
 
-avgs_left = _avg_waiting_times(left_queue)
-avgs_right = _avg_waiting_times(right_queue)
+avgs_left = avg_waiting_times(left_queue)
+avgs_right = avg_waiting_times(right_queue)
 
 avg_queue_length_left = mean([cell["queue"] for cell in left_queue.black_box])
 avg_queue_length_right = mean([cell["queue"] for cell in right_queue.black_box])
