@@ -4,6 +4,7 @@ from src.models.traffic_lights import TrafficLightState
 from src.models.light_control_system import ControlSystem
 from numpy import mean, random
 
+from src.utils.helpful_methods import _avg_waiting_times
 from src.utils.printing_methods import print_red_queue, print_queue_state
 
 random.seed(42)
@@ -17,19 +18,6 @@ right_light_system: LightsSystem = LightsSystem.create(TrafficLightState.RED, 70
 right_queue: Queue = Queue.create_queue(
     right_light_system
 )
-
-def _avg_waiting_times(queue: Queue):
-    waiting_times = [happy_driver.black_box.get('waiting_time', 0) for happy_driver in queue.happy_drivers]
-    no_stop = sum([1 for happy_driver in queue.happy_drivers if happy_driver.black_box.get('waiting_time', 0) == 0])
-    green_waiting_times = [happy_driver.black_box.get('green_wait_time', 0) for happy_driver in queue.happy_drivers]
-    queue_length = [happy_driver.black_box.get('drivers_in_queue', 0) for happy_driver in queue.happy_drivers]
-    served = len(queue.happy_drivers)
-    return {'avg_waiting_times': mean(waiting_times),
-            'avg_green_waiting_times': mean(green_waiting_times),
-            'avg_queue_length': mean(queue_length),
-            'drivers_served': served,
-            'no_stop_drivers': str(round(100 * no_stop / served, 2))+"%"}
-
 
 cosh1 = []
 cosh2 = []
