@@ -88,9 +88,8 @@ class Queue:
             self.enqueue(self.light_system.drivers.pop(0))
             self.update(timestamp)
 
-    def update_lights(self, green_new_time: float, red_new_time: float) -> None:
+    def update_lights(self, green_new_time: float, red_new_time: float) -> tuple:
         state, _ = self.light_system.lights_timestamps.pop(0)
-        print(state, _)
         if state == TrafficLightState.GREEN:
             self.light_state = True
             self.green_timestamp = self.red_timestamp + red_new_time + 5
@@ -100,8 +99,7 @@ class Queue:
                 self.red_timestamp = self.green_timestamp + green_new_time
             else:
                 self.red_timestamp = self.green_timestamp + green_new_time
-        print(f'GREEN: {self.green_timestamp}')
-        print(f'RED: {self.red_timestamp}')
+        return state, _, self.green_timestamp, self.red_timestamp
 
     @property
     def black_box(self) -> List[dict]:
@@ -111,13 +109,13 @@ class Queue:
     def black_box(self, value: dict) -> None:
         self._blackbox.append(value)
 
-    def run(self, light_times: tuple[float, ...] | None = None) -> None:
+    def run(self, light_times: tuple[float, ...] | None = None) -> tuple:
         drove: int = 0
         self.counter += 1
 
         time_penalty = 0
         if self.light_state:
-            self.update_lights(*light_times)
+            data_to_return: tuple = self.update_lights(*light_times)
             self.update(self.red_timestamp)
             if not self.is_empty():
                 self.current_time = self.green_timestamp
@@ -129,7 +127,7 @@ class Queue:
                     time_penalty += 0.25
             self.update(self.red_timestamp + 5)
         else:
-            self.update_lights(*light_times)
+            data_to_return: tuple = self.update_lights(*light_times)
             self.update(self.green_timestamp)
 
         data: dict[str, Any] = dict()
@@ -144,6 +142,8 @@ class Queue:
 
         self.last_avg_waiting_time = list()
         self.black_box.append(data)
+
+        return data_to_return
 
     def scan_queue(self) -> int:
         return self._blackbox[-1]['queue']
