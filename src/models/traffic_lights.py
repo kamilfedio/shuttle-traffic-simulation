@@ -8,60 +8,40 @@ from enum import StrEnum, auto
 class TrafficLightState(StrEnum):
     RED = auto()
     GREEN = auto()
-    YELLOW = auto()
-
-
-class TrafficLightMode(StrEnum):
-    SHUTDOWN = auto()
-    STARTUP = auto()
 
 
 class TrafficLight:
     def __init__(
-        self,
-        id: int,
-        state: TrafficLightState,
-        mode: TrafficLightMode,
+            self,
+            traffic_id: int,
+            state: TrafficLightState,
     ):
-        self.id: int = id
-        self.state: TrafficLightState = state
-        self.mode: TrafficLightMode = mode
+        self.traffic_id: int = traffic_id
+        self._state: TrafficLightState = state
 
     def __str__(self) -> str:
-        return f"TrafficLight {self.id} - {self.state}"
+        return f"TrafficLight {self.traffic_id} - {self.state}"
 
     @classmethod
-    def create(cls, id: int, state: TrafficLightState) -> "TrafficLight":
+    def create(cls, traffic_id: int, state: TrafficLightState) -> "TrafficLight":
         return cls(
-            id,
+            traffic_id,
             state,
-            mode=(
-                TrafficLightMode.STARTUP
-                if state == TrafficLightState.RED
-                else TrafficLightMode.SHUTDOWN
-            ),
+
         )
 
-    def _get_next_state_startup(self) -> None:
-        match self.state:
-            case TrafficLightState.RED:
-                self.state = TrafficLightState.YELLOW
-            case TrafficLightState.YELLOW:
-                self.state = TrafficLightState.GREEN
-                self.mode = TrafficLightMode.SHUTDOWN
+    @property
+    def state(self) -> TrafficLightState:
+        return self._state
 
-    def _get_next_state_shutdown(self) -> None:
-        match self.state:
-            case TrafficLightState.GREEN:
-                self.state = TrafficLightState.YELLOW
-            case TrafficLightState.YELLOW:
-                self.state = TrafficLightState.RED
-                self.mode = TrafficLightMode.STARTUP
+    @state.setter
+    def state(self, value: TrafficLightState) -> None:
+        self._state = value
 
     def change_state(
-        self,
+            self,
     ) -> None:
-        if self.mode == TrafficLightMode.STARTUP:
-            self._get_next_state_startup()
+        if self.state == TrafficLightState.RED:
+            self.state = TrafficLightState.GREEN
         else:
-            self._get_next_state_shutdown()
+            self.state = TrafficLightState.RED
