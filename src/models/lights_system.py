@@ -21,6 +21,7 @@ class LightsSystem:
             self,
             traffic_lights: TrafficLight,
             num_drivers: int,
+            traffic_intensity: float | int | None = None
     ) -> None:
         self.lights_change_time: LightsChangesTime | None = None
         self.traffic_lights = traffic_lights
@@ -28,9 +29,10 @@ class LightsSystem:
         self.drivers: List[Driver] | None = None
         self._drivers_timestamps: List[float] | None = None
         self._lights_timestamps: List[float] | None = None
+        self.traffic_intensity: float | int | None = traffic_intensity
 
     def generate_drivers(self) -> None:
-        self.drivers: List[Driver] = [Driver.generate_driver(driver_id=i+1) for i in range(self.num_drivers)]
+        self.drivers: List[Driver] = [Driver.generate_driver(driver_id=i+1, traffic_intensity=self.traffic_intensity) for i in range(self.num_drivers)]
         self.drivers_timestamps = np.cumsum([driver.arrived_time for driver in self.drivers])
         for idx, timestamp in enumerate(self.drivers_timestamps):
             self.drivers[idx].arrived_timestamp = timestamp
@@ -79,5 +81,8 @@ class LightsSystem:
         self._drivers_timestamps = value
 
     @classmethod
-    def create(cls, traffic_state: TrafficLightState, num_drivers: int = 0) -> "LightsSystem":
-        return cls(traffic_lights=TrafficLight.create(0, traffic_state), num_drivers=num_drivers)
+    def create(cls, traffic_state: TrafficLightState, num_drivers: int = 0, traffic_intensity: float | int | None = None) -> "LightsSystem":
+        return cls(traffic_lights=TrafficLight.create(0, traffic_state),
+                   num_drivers=num_drivers,
+                   traffic_intensity=traffic_intensity
+                   )

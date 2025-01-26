@@ -4,6 +4,7 @@ from src.models.queue import Queue
 from src.models.traffic_lights import TrafficLightState
 from src.utils.helpful_methods import create_blackbox
 from src.utils.printing_methods import print_queue_state, print_red_queue, print_simulation_summary, print_cycle_summary
+from typing import Literal
 
 
 class Simulation:
@@ -21,10 +22,22 @@ class Simulation:
     @classmethod
     def create(cls, num_drivers: int = 700, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
                is_debugging: bool = False, times: tuple[float, float] = (15, 20),
-               alpha: int | float = 1) -> 'Simulation':
-        left_light_system: LightsSystem = LightsSystem.create(left_traffic_state, num_drivers)
+               alpha: int | float = 1, left_intensity: Literal['low', 'mid', 'high'] | None = None,
+               right_intensity: Literal['low', 'mid', 'high'] | None = None) -> 'Simulation':
+
+        intensity_params: dict = {'low': 9, 'mid': 5, 'high': 4.5}
+        if left_intensity:
+            if left_intensity not in intensity_params:
+                raise ValueError(f'Unknown left intensity: {left_intensity}')
+        if right_intensity:
+            if right_intensity not in intensity_params:
+                raise ValueError(f'Unknown right intensity: {right_intensity}')
+
+        left_light_system: LightsSystem = LightsSystem.create(left_traffic_state, num_drivers,
+                                                              intensity_params[left_intensity] if left_intensity else None)
         right_light_system: LightsSystem = LightsSystem.create(
-            TrafficLightState.RED if left_traffic_state.GREEN else TrafficLightState.GREEN, num_drivers)
+            TrafficLightState.RED if left_traffic_state.GREEN else TrafficLightState.GREEN, num_drivers,
+            intensity_params[right_intensity] if right_intensity else None)
 
         return cls(
             left_queue=Queue.create_queue(left_light_system),
