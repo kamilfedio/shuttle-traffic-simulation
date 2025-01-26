@@ -20,7 +20,7 @@ class Simulation:
         self.blackbox: dict[str, dict] = {}
 
     @classmethod
-    def create(cls, num_drivers: int = 700, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
+    def create(cls, num_drivers: int = 800, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
                is_debugging: bool = False, times: tuple[float, float] = (15, 20),
                alpha: int | float = 1, left_intensity: Literal['low', 'mid', 'high'] | None = None,
                right_intensity: Literal['low', 'mid', 'high'] | None = None) -> 'Simulation':
@@ -33,11 +33,12 @@ class Simulation:
             if right_intensity not in intensity_params:
                 raise ValueError(f'Unknown right intensity: {right_intensity}')
 
-        left_light_system: LightsSystem = LightsSystem.create(left_traffic_state, num_drivers,
-                                                              intensity_params[left_intensity] if left_intensity else None)
+        left_light_system: LightsSystem = LightsSystem.create(left_traffic_state,
+                                                              intensity_params[left_intensity] if left_intensity else 5,
+                                                              num_drivers)
         right_light_system: LightsSystem = LightsSystem.create(
-            TrafficLightState.RED if left_traffic_state.GREEN else TrafficLightState.GREEN, num_drivers,
-            intensity_params[right_intensity] if right_intensity else None)
+            TrafficLightState.RED if left_traffic_state.GREEN else TrafficLightState.GREEN,
+            intensity_params[right_intensity] if right_intensity else 5, num_drivers)
 
         return cls(
             left_queue=Queue.create_queue(left_light_system),

@@ -50,7 +50,7 @@ class Driver:
                 f"Data collected: {self.black_box}")
 
     @classmethod
-    def generate_driver(cls, driver_id: int, traffic_intensity: float | int | None) -> "Driver":
+    def generate_driver(cls, driver_id: int, traffic_intensity: float | int) -> "Driver":
         return cls(
             driver_id,
             name=np.random.choice(generate_names.possible_names),
@@ -58,7 +58,7 @@ class Driver:
             reaction_time=np.random.lognormal(-0.4, 0.38, 1).tolist()[0] + 0.3,
             red_running_time=random.sample(RED_RUNNING_TIMES, 1
                                            )[0],
-            arrived_time=np.random.exponential(traffic_intensity if traffic_intensity else 5, 1).tolist()[0] + 1
+            arrived_time=np.random.exponential(traffic_intensity, 1).tolist()[0] + 1
         )
 
     @property
