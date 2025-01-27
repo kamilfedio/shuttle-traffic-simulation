@@ -21,27 +21,26 @@ class Training:
         return cls(precision, floor, ceil)
 
     def eval_range(self):
-        candidates: npt.NDArray[float] = np.linspace(self.floor, self.ceil, 10, endpoint=True)
+        candidates: npt.NDArray[float] = np.linspace(self.floor, self.ceil, 15, endpoint=True)
         results: dict[float, int] = {}
 
         for alpha in tqdm(candidates):
             results_for_alpha: List[float] = []
             for left, right in self.intensity_cases:
                 temp_result = 0
-                for _ in range(2):
-                    print(alpha, left, right)
+                for _ in range(15):
                     simulation = Simulation.create(is_training=True, left_intensity=left, right_intensity=right,
                                                    alpha=alpha)
                     temp_result += simulation.simulate()
-                results_for_alpha.append(temp_result / 2)
+                results_for_alpha.append(temp_result / 15)
             results[alpha] = np.average(results_for_alpha)
 
         self.alpha_results.update(results)
         return results
 
     def _set_new_range(self, results: dict[float, int]):
-        self.new_range = [alpha for alpha in sorted(results, key=results.get)][0:5]
-        diff = abs(self.new_range[4] - self.new_range[0])
+        self.new_range = [alpha for alpha in sorted(results, key=results.get)][0:7]
+        diff = abs(self.new_range[6] - self.new_range[0])
         _floor = self.new_range[0] - diff
         self.floor = _floor if _floor >= 1 else 1
         self.ceil = self.new_range[0] + diff
@@ -51,13 +50,13 @@ class Training:
             iteration_results = self.eval_range()
             self._set_new_range(iteration_results)
             print(f'\nIteration {iteration+1} best alpha values: {self.new_range}')
-        print(self.alpha_results)
+        print(f'\nBest alpha: {self.new_range[0]}, avg time: {self.alpha_results[self.new_range[0]]}')
 
     def make_chart(self):
         alphas = []
         avgs = []
         for key, val in sorted(self.alpha_results.items(), key=lambda x: x[0]):
-            if val < 100:
+            if val < 35:
                 alphas.append(key)
                 avgs.append(val)
 
@@ -69,6 +68,6 @@ class Training:
         plt.show()
 
 
-training = Training.create(2, 1, 1.3)
+training = Training.create(7, 1, 1.3)
 training.train()
 training.make_chart()
