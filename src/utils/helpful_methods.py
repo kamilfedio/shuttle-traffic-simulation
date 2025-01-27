@@ -30,3 +30,10 @@ def create_blackbox(queue: Queue, direction: str) -> dict[str, Any]:
         'avg_cycle_wait': avg_cycle_wait,
         'direction': direction
     }
+
+
+def get_eval_avg(blackbox: dict[str, Any]) -> float:
+    _temp_val: float = 0
+    for key, blackbox in blackbox.items():
+        _temp_val += blackbox['avgs']['avg_waiting_times']
+    return _temp_val / 2

@@ -63,6 +63,7 @@ def print_simulation_summary(blackbox: dict[str, Any]) -> None:
             f"{blackbox['avg_queue_length']:<16.2f} | {blackbox['avg_cycle_wait']:<15.2f} |")
         print('-' * 158)
 
+
 def print_cycle_summary(data: tuple, direction: str, is_left_green: bool = True) -> None:
     if is_left_green:
         print(f'\n{direction}')

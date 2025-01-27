@@ -2,18 +2,19 @@ from src.models.light_control_system import ControlSystem
 from src.models.lights_system import LightsSystem
 from src.models.queue import Queue
 from src.models.traffic_lights import TrafficLightState
-from src.utils.helpful_methods import create_blackbox
+from src.utils.helpful_methods import create_blackbox, get_eval_avg
 from src.utils.printing_methods import print_queue_state, print_red_queue, print_simulation_summary, print_cycle_summary
 from typing import Literal
 
 
 class Simulation:
-    def __init__(self, left_queue: Queue, right_queue: Queue, is_debugging: bool, times: tuple[float, float],
-                 control_system: ControlSystem) -> None:
+    def __init__(self, left_queue: Queue, right_queue: Queue, is_debugging: bool, is_training: bool,
+                 times: tuple[float, float], control_system: ControlSystem) -> None:
         self.left_queue: Queue = left_queue
         self.right_queue: Queue = right_queue
         self.control_system: ControlSystem = control_system
         self.is_debugging: bool = is_debugging
+        self.is_training: bool = is_training
         self.cosh1: list = []
         self.cosh2: list = []
         self.times: tuple[float, float] = times
@@ -21,7 +22,7 @@ class Simulation:
 
     @classmethod
     def create(cls, num_drivers: int = 800, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
-               is_debugging: bool = False, times: tuple[float, float] = (15, 20),
+               is_debugging: bool = False, is_training: bool = False, times: tuple[float, float] = (15, 20),
                alpha: int | float = 1, left_intensity: Literal['low', 'mid', 'high'] | None = None,
                right_intensity: Literal['low', 'mid', 'high'] | None = None) -> 'Simulation':
 
@@ -44,6 +45,7 @@ class Simulation:
             left_queue=Queue.create_queue(left_light_system),
             right_queue=Queue.create_queue(right_light_system),
             is_debugging=is_debugging,
+            is_training=is_training,
             times=times,
             control_system=ControlSystem.create_control_system(times[0], alpha)
         )
@@ -71,11 +73,14 @@ class Simulation:
     def _simulation_summary(self) -> None:
         print_simulation_summary(self.blackbox)
 
+    def _eval_avg(self) -> float:
+        return get_eval_avg(self.blackbox)
+
     def _create_blackbox(self) -> None:
         self.blackbox['left_queue'].update(create_blackbox(self.left_queue, 'left'))
         self.blackbox['right_queue'].update(create_blackbox(self.right_queue, 'right'))
 
-    def simulate(self, simulation_seconds: int = 3600) -> None:
+    def simulate(self, simulation_seconds: int = 3600) -> None | float:
         cycle: int = 0
         self.blackbox['left_queue'] = {'first_color': self.left_queue.light_system.traffic_lights.state}
         self.blackbox['right_queue'] = {'first_color': self.right_queue.light_system.traffic_lights.state}
@@ -98,6 +103,9 @@ class Simulation:
 
         if self.is_debugging:
             self._simulation_summary()
+
+        if self.is_training:
+            return self._eval_avg()
 
     def run_simulation_x_times(self):
         pass

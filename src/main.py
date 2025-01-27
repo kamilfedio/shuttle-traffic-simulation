@@ -1,8 +1,26 @@
 import numpy as np
 from src.models.simulation import Simulation
+import matplotlib.pyplot as plt
 
 np.random.seed(42)
 
+#simulation = Simulation.create(is_debugging=True, left_intensity='high', right_intensity='mid', alpha=1.05)
+#simulation.simulate()
 
-simulation = Simulation.create(is_debugging=True, left_intensity='high', right_intensity='high', alpha=1.05)
-simulation.simulate()
+
+a = {1.0: 27.854621298854813, 1.0333333333333334: 25.014161019579273, 1.0666666666666667: 32.20164427591564, 1.1: 45.32658951208982, 1.1333333333333333: 88.76141415240568, 1.1666666666666667: 1026.5865275264125, 1.2: 4944521106078158.0, 1.2333333333333334: 3656453334.094464, 1.2666666666666666: 9110542577121.186, 1.3: 7.203937012501679e+32, 1.0148148148148148: 18.719092779543633, 1.0296296296296297: 24.120386600338012, 1.0444444444444445: 27.058002426786526, 1.0592592592592593: 18.561001911358613, 1.074074074074074: 30.08008220751425, 1.0888888888888888: 34.96515015584303, 1.1037037037037036: 41.439842913199875, 1.1185185185185185: 67.40865852092662}
+x = []
+y = []
+
+for key, val in sorted(a.items(), key=lambda x:x[0]):
+    if val < 60:
+        x.append(key)
+        y.append(val)
+
+print(x)
+print(y)
+plt.plot(x, y)
+plt.xlabel('Alpha')
+plt.ylabel('AVG wait time')
+plt.title('Alpha values and their corresponding waiting times')
+plt.show()
