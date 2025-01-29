@@ -83,6 +83,10 @@ for dicti in data_values:
         else:
             dicti[k] = v[0]
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.expand_frame_repr', False)
+
 df_norm = pd.DataFrame.from_records(data_values)
 print(df_norm)
 
