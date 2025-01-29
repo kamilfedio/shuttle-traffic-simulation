@@ -23,7 +23,7 @@ class Simulation:
     @classmethod
     def create(cls, num_drivers: int = 800, left_traffic_state: TrafficLightState = TrafficLightState.GREEN,
                is_debugging: bool = False, is_training: bool = False, times: tuple[float, float] = (15, 20),
-               alpha: int | float = 1, left_intensity: Literal['low', 'mid', 'high'] | None = None,
+               use_control_system: bool = False, left_intensity: Literal['low', 'mid', 'high'] | None = None,
                right_intensity: Literal['low', 'mid', 'high'] | None = None) -> 'Simulation':
 
         intensity_params: dict = {'low': 9, 'mid': 5, 'high': 4.5}
@@ -47,7 +47,7 @@ class Simulation:
             is_debugging=is_debugging,
             is_training=is_training,
             times=times,
-            control_system=ControlSystem.create_control_system(times[0], alpha)
+            control_system=ControlSystem.create_control_system(times[0], 1.02 if use_control_system else 1)
         )
 
     def _run_cycle(self) -> None:
@@ -106,6 +106,10 @@ class Simulation:
 
         if self.is_training:
             return self._eval_avg()
+
+    @property
+    def get_data(self):
+        return self.blackbox
 
     def run_simulation_x_times(self):
         pass

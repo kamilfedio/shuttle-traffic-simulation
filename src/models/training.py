@@ -1,6 +1,6 @@
 from src.models.simulation import Simulation
 from typing import List
-from tqdm import tqdm, trange
+from tqdm import tqdm
 import numpy as np
 import numpy.typing as npt
 import matplotlib.pyplot as plt
@@ -22,17 +22,17 @@ class Training:
 
     def eval_range(self):
         candidates: npt.NDArray[float] = np.linspace(self.floor, self.ceil, 15, endpoint=True)
-        results: dict[float, int] = {}
+        results: dict[int | float, int | float] = {}
 
         for alpha in tqdm(candidates):
             results_for_alpha: List[float] = []
             for left, right in self.intensity_cases:
                 temp_result = 0
-                for _ in range(15):
+                for _ in range(10):
                     simulation = Simulation.create(is_training=True, left_intensity=left, right_intensity=right,
                                                    alpha=alpha)
                     temp_result += simulation.simulate()
-                results_for_alpha.append(temp_result / 15)
+                results_for_alpha.append(temp_result / 10)
             results[alpha] = np.average(results_for_alpha)
 
         self.alpha_results.update(results)
@@ -68,6 +68,6 @@ class Training:
         plt.show()
 
 
-training = Training.create(7, 1, 1.3)
+training = Training.create(6, 1, 1.2)
 training.train()
 training.make_chart()
