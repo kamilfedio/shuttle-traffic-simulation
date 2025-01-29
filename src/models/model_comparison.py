@@ -47,47 +47,53 @@ for left, right in cases:
     results_normal.append(evaluation.get_results_normal)
     results_control_system.append(evaluation.get_results_control_system)
 
-data_values: list[dict[str, Any]] = []
 
-for case in results_normal:
-    cases_values = {}
-    for tries in case:
-        for queue, data in tries.items():
-            for key, value in data.items():
-                if key == 'avgs':
-                    for k, avg in value.items():
-                        keyname: str = f'{queue}_{key}_{k}'
+def get_res(results):
+    data_values: list[dict[str, Any]] = []
+    for case in results:
+        cases_values = {}
+        for tries in case:
+            for queue, data in tries.items():
+                for key, value in data.items():
+                    if key == 'avgs':
+                        for k, avg in value.items():
+                            keyname: str = f'{queue}_{key}_{k}'
+
+                            if not cases_values.get(keyname):
+                                cases_values[keyname] = []
+
+                            cases_values[keyname].append(avg)
+
+                    else:
+                        keyname: str = f'{queue}_{key}'
 
                         if not cases_values.get(keyname):
                             cases_values[keyname] = []
 
-                        cases_values[keyname].append(avg)
+                        cases_values[keyname].append(value)
 
-                else:
-                    keyname: str = f'{queue}_{key}'
+        data_values.append(cases_values)
 
-                    if not cases_values.get(keyname):
-                        cases_values[keyname] = []
+    for dicti in data_values:
+        for k, v in dicti.items():
+            if 'queue_avgs_no_stop_drivers' in k:
+                tmp = [float(i[:-1]) for i in v]
+                dicti[k] = np.mean(tmp)
+            elif 'avgs' in k:
+                dicti[k] = np.mean(v)
+            else:
+                dicti[k] = v[0]
 
-                    cases_values[keyname].append(value)
-
-    data_values.append(cases_values)
-
-for dicti in data_values:
-    for k, v in dicti.items():
-        if 'queue_avgs_no_stop_drivers' in k:
-            tmp = [float(i[:-1]) for i in v]
-            dicti[k] = np.mean(tmp)
-        elif 'avgs' in k:
-            dicti[k] = np.mean(v)
-        else:
-            dicti[k] = v[0]
+    return data_values
 
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.expand_frame_repr', False)
 
-df_norm = pd.DataFrame.from_records(data_values)
-print(df_norm)
+control_system_res = get_res(results_control_system)
+normal_res = get_res(results_normal)
 
-print([col for col in df_norm.columns])
+df_norm = pd.DataFrame.from_records(normal_res)
+df_control = pd.DataFrame.from_records(control_system_res)
+print(df_norm)
+print(df_control)
