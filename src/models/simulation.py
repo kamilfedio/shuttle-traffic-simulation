@@ -111,5 +111,6 @@ class Simulation:
     def get_data(self):
         return self.blackbox
 
-    def run_simulation_x_times(self):
-        pass
+    def get_avg_wait_time(self) -> float:
+        return (self.blackbox['left_queue']['avgs']['avg_waiting_times'] +
+                self.blackbox['right_queue']['avgs']['avg_waiting_times']) / 2

@@ -125,9 +125,9 @@ r
 
 Dla każdego przypadku testowane 2 wersje:
 - ustalone czasy trwania świateł (alpha = 1)
-- inteligentny system kontroli świateł (alpha = ?)
+- inteligentny system kontroli świateł (alpha = 1.02)
 
-Ilość powtórzeń dla każdego przypadku: 20 ?
+Ilość powtórzeń dla każdego przypadku: 30
 
 
 ## PARAMETRY ŚWIADCZĄCE O JAKOŚCI MODELU
