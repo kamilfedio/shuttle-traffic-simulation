@@ -85,4 +85,3 @@ r
 - Czas przejazdu liniowo wpływa na ilość przejechanych samochodów
 - Natężenie ruchu wpływa wykładniczo na długość kolejki
 
-# Jak to ma działać
