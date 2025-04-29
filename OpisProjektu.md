@@ -11,7 +11,7 @@ Optymalizacja przepustowości drogi poprzez dobór idealnego czasu dla sygnaliza
 ## Hipotezy
 
 1. Wydłużenie czasu trwania zielonego światła przy większym natężeniu ruchu w jednym kierunku poprawi przepustowość drogi, w porównaniu do takiego samego czasu dla A i B.
-2. Istnienie czujnika przejazdu samochodu resetującego czas trwania przerwy pomiędzy światłami poprawia średnią przepustowość odcinka.
+2. Istnienie czujnika przejazdu samochodu resetującego czas trwania przerwy pomiędzy światłami poprawia średnią przepustowość odcinka. (to zmieniliśmy na inteligentny system świateł)
 3. Równomierny podział czasu sygnalizacji przy równym natężeniu ruchu minimalizuje średni czas oczekiwania.
 
 ## Wejścia
@@ -85,3 +85,61 @@ r
 - Czas przejazdu liniowo wpływa na ilość przejechanych samochodów
 - Natężenie ruchu wpływa wykładniczo na długość kolejki
 
+# Plan działania
+
+**STAŁE**
+- Czas reakcji kierowcy: (rozkład lognormalny (średnia: 1, odchylenie standardowe: 0.38) + 0.3
+
+  <img src="./data/charts/distributions/lognormal.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
+
+
+- Timestamp wjazdu na czerwonym świetle, wartości mniejsze od 5 z połączonych rozkładów: 
+  - abs(rozkład normalny (średnia: 0, odchylenie standardowe: 1.2, ilość: 3000)), 
+  - abs(rozkład normalny (średnia: 4, odchylenie standardowe: 0.75, ilość: 2000)) 
+
+  <img src="./data/charts/distributions/red_light.jpg" alt="Kot z laptopem" title="Lognormal" width="500">
+
+
+- Czy kierowca wygrał prawo jazdy w laysach: 2% szansy dla każdego kierowcy
+
+
+**ZMIENNE**
+- Czas przyjazdu następnego kierowcy:
+    - Niskie natężenie (0 do 1 osób czekają ponad 1 cykl): rozkład wykładniczy (scale: 9)
+    - Średnie natężenie (1 do 4 osób czekają ponad 1 cykl): rozkład wykładniczy (scale: 5)
+    - Wysokie natężenie (powyzej 4 osoby czekają ponad 1 cykl): rozkład wykładniczy (scale: 4.5)
+
+
+
+## PRZYPADKI TESTOWE
+
+1)  Lewa kolejka: małe natężenie, prawa kolejka: małe natężenie
+2)  Lewa kolejka: średnie natężenie, prawa kolejka: średnie natężenie
+3)  Lewa kolejka: duże natężenie, prawa kolejka: dużę natężenie
+
+
+4)  Lewa kolejka: małe natężenie, prawa kolejka: średnie natężenie
+5)  Lewa kolejka: małe natężenie, prawa kolejka: duże natężenie
+6)  Lewa kolejka: średnie natężenie, prawa kolejka: duże natężenie
+
+
+Dla każdego przypadku testowane 2 wersje:
+- ustalone czasy trwania świateł (alpha = 1)
+- inteligentny system kontroli świateł (alpha = 1.02)
+
+Ilość powtórzeń dla każdego przypadku: 30
+
+
+## PARAMETRY ŚWIADCZĄCE O JAKOŚCI MODELU
+Główny:
+- średni czas oczekiwania
+
+Pozostałe:
+- ilość kierowców, którzy przejechali
+- procent kierowców którzy nir musieli się zatrzymać
+- średni czas oczekiwania na zielonym świetle
+- średnia długość kolejki podczas końcowego momentu cyklu
+- średnia ilość kierowców czekających dłużej niż 1 cykl
+
+
+Test sprawdzające czy inteligentny system kontroli radzi sobie lepiej - test t dla prób niezależnych
